@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'export', // <--- Agregá esto para generar la carpeta "out"
   images: {
-    // Esto permite que Next.js optimice las imágenes sin errores de dominio
     unoptimized: true, 
   },
 };
