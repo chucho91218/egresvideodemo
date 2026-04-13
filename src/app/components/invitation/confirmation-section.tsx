@@ -1,25 +1,23 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Plus, Minus, MessageCircle, Utensils, Music, User } from "lucide-react";
+import React, { useState } from "react";
+import { Plus, Minus, MessageCircle, Utensils, User, CalendarCheck } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Guest {
   name: string;
   diet: string;
-  song: string;
 }
 
 export const ConfirmationSection = () => {
-  const [type, setType] = useState<"cena" | "brindis">("cena");
-  const [guests, setGuests] = useState<Guest[]>([{ name: "", diet: "Ninguna", song: "" }]);
+  const [guests, setGuests] = useState<Guest[]>([{ name: "", diet: "Ninguna" }]);
+  const whatsappNumber = "5493416124587";
+  const limitDate = "25 de Noviembre";
 
-  const whatsappNumber = "543573690769";
-
-  // Manejar cantidad de invitados
   const updateGuestCount = (newCount: number) => {
-    if (newCount < 1) return;
+    if (newCount < 1 || newCount > 6) return;
     if (newCount > guests.length) {
-      setGuests([...guests, { name: "", diet: "Ninguna", song: "" }]);
+      setGuests([...guests, { name: "", diet: "Ninguna" }]);
     } else {
       setGuests(guests.slice(0, -1));
     }
@@ -32,131 +30,115 @@ export const ConfirmationSection = () => {
   };
 
   const handleConfirm = () => {
-    let message = "";
-    if (type === "cena") {
-      message = `¡Hola! Confirmo asistencia para la CENA de Egresados:%0A`;
-      guests.forEach((g, i) => {
-        message += `%0A*Invitado ${i + 1}:* ${g.name || "Sin nombre"}%0A• Dieta: ${g.diet}%0A• Canción: ${g.song || "N/A"}%0A`;
-      });
-    } else {
-      message = `¡Hola! Confirmo mi asistencia para el BRINDIS de Egresados. ¡Ahí estaré!`;
-    }
+    let message = `¡Hola! Confirmo asistencia para la fiesta de Egresados San Marcos (Promo 2026):%0A`;
+    guests.forEach((g, i) => {
+      message += `%0A*Invitado ${i + 1}:* ${g.name || "Sin nombre"}%0A• Menú: ${g.diet}%0A`;
+    });
     window.open(`https://wa.me/${whatsappNumber}?text=${message}`, "_blank");
   };
 
   return (
-    <section className="py-24 px-6 max-w-2xl mx-auto text-center">
-      <p className="text-[10px] uppercase tracking-[0.4em] text-primary/40 mb-4 font-bold">Confirmación</p>
-      <h2 className="font-serif text-3xl text-primary mb-12 italic">¿Venís a la fiesta?</h2>
-
-      {/* Selector de tipo */}
-      <div className="flex gap-2 mb-10 p-1 bg-slate-50 rounded-2xl border border-slate-100">
-        <button
-          onClick={() => setType("cena")}
-          className={`flex-1 py-3 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all ${
-            type === "cena" ? "bg-white text-primary shadow-sm border border-slate-100" : "text-primary/30"
-          }`}
+    <section className="py-32 px-6 bg-black relative">
+      <div className="max-w-xl mx-auto relative z-10">
+        
+        {/* Header Minimalista */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          className="text-center mb-16 space-y-4"
         >
-          Cena
-        </button>
-        <button
-          onClick={() => setType("brindis")}
-          className={`flex-1 py-3 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all ${
-            type === "brindis" ? "bg-white text-primary shadow-sm border border-slate-100" : "text-primary/30"
-          }`}
-        >
-          Brindis
-        </button>
-      </div>
-
-      <div className="space-y-6">
-        {type === "cena" ? (
-          <>
-            {/* Contador */}
-            <div className="bg-white border border-slate-100 p-8 rounded-3xl">
-              <p className="text-[9px] uppercase tracking-widest font-bold text-primary/30 mb-6">¿Cuántas personas confirman?</p>
-              <div className="flex items-center justify-center gap-10">
-                <button 
-                  onClick={() => updateGuestCount(guests.length - 1)}
-                  className="w-10 h-10 rounded-full border border-slate-100 flex items-center justify-center text-primary/40 hover:border-primary/20"
-                >
-                  <Minus size={14} />
-                </button>
-                <span className="text-3xl font-serif text-primary">{guests.length}</span>
-                <button 
-                  onClick={() => updateGuestCount(guests.length + 1)}
-                  className="w-10 h-10 rounded-full border border-slate-100 flex items-center justify-center text-primary/40 hover:border-primary/20"
-                >
-                  <Plus size={14} />
-                </button>
-              </div>
-            </div>
-
-            {/* Formularios Dinámicos */}
-            {guests.map((guest, index) => (
-              <div key={index} className="bg-white border border-slate-100 p-8 rounded-3xl text-left space-y-6 animate-in fade-in slide-in-from-top-2 duration-500">
-                <div className="flex items-center gap-2 pb-4 border-b border-slate-50">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-primary/20">Invitado {index + 1}</span>
-                </div>
-                
-                <div className="space-y-4">
-                  <div>
-                    <label className="flex items-center gap-2 text-[9px] uppercase tracking-widest font-bold text-primary/30 mb-2">
-                      <User size={12} /> Nombre y Apellido
-                    </label>
-                    <input 
-                      type="text" 
-                      className="w-full border-b border-slate-100 py-2 focus:outline-none focus:border-primary/30 transition-colors text-sm"
-                      value={guest.name}
-                      onChange={(e) => updateGuestData(index, "name", e.target.value)}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="flex items-center gap-2 text-[9px] uppercase tracking-widest font-bold text-primary/30 mb-2">
-                      <Utensils size={12} /> Restricción alimentaria
-                    </label>
-                    <select 
-                      className="w-full border-b border-slate-100 py-2 focus:outline-none bg-transparent text-sm text-primary/70"
-                      value={guest.diet}
-                      onChange={(e) => updateGuestData(index, "diet", e.target.value)}
-                    >
-                      <option>Ninguna</option>
-                      <option>Celíaco/a</option>
-                      <option>Vegetariano/a</option>
-                      <option>Vegano/a</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="flex items-center gap-2 text-[9px] uppercase tracking-widest font-bold text-primary/30 mb-2">
-                      <Music size={12} /> Canción favorita
-                    </label>
-                    <input 
-                      type="text" 
-                      className="w-full border-b border-slate-100 py-2 focus:outline-none focus:border-primary/30 transition-colors text-sm"
-                      value={guest.song}
-                      onChange={(e) => updateGuestData(index, "song", e.target.value)}
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </>
-        ) : (
-          <div className="bg-white border border-slate-100 p-12 rounded-3xl">
-            <p className="text-sm text-primary/50 leading-relaxed italic">
-              "Confirmá tu asistencia para el momento del brindis y baile."
-            </p>
+          <div className="inline-block p-3 rounded-2xl bg-amber-500/5 border border-amber-500/10 mb-2">
+            <CalendarCheck className="text-amber-500/60" size={24} strokeWidth={1.5} />
           </div>
-        )}
+          <h2 className="font-serif text-5xl text-white italic tracking-tight">Confirmación.</h2>
+          <p className="text-[10px] uppercase tracking-[0.6em] text-slate-500 font-bold">
+            RSVP ANTES DEL {limitDate}
+          </p>
+        </motion.div>
 
-        <button
-          onClick={handleConfirm}
-          className="w-full py-5 bg-[#1a2537] text-white rounded-full flex items-center justify-center gap-3 font-bold text-[11px] uppercase tracking-widest shadow-lg hover:bg-black transition-all mt-6"
-        >
-          <MessageCircle size={18} /> Confirmar Asistencia
-        </button>
+        {/* Contenedor Principal con Glassmorphism */}
+        <div className="bg-zinc-950/40 border border-white/5 backdrop-blur-xl rounded-[3rem] p-8 md:p-12 space-y-10">
+          
+          {/* Selector de Cantidad Estilizado */}
+          <div className="text-center space-y-6">
+            <p className="text-[9px] uppercase tracking-[0.4em] text-amber-500/50 font-bold">Integrantes del grupo</p>
+            <div className="flex items-center justify-between max-w-[200px] mx-auto border border-white/10 rounded-full p-2">
+              <button 
+                onClick={() => updateGuestCount(guests.length - 1)}
+                className="w-10 h-10 rounded-full flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/5 transition-all"
+              >
+                <Minus size={14} />
+              </button>
+              <span className="text-3xl font-serif text-white">{guests.length}</span>
+              <button 
+                onClick={() => updateGuestCount(guests.length + 1)}
+                className="w-10 h-10 rounded-full flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/5 transition-all"
+              >
+                <Plus size={14} />
+              </button>
+            </div>
+          </div>
+
+          {/* Formulario Dinámico */}
+          <div className="space-y-12">
+            <AnimatePresence mode="popLayout">
+              {guests.map((guest, index) => (
+                <motion.div 
+                  key={index}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 10 }}
+                  className="space-y-8"
+                >
+                  <div className="flex items-center gap-4">
+                    <span className="text-[9px] font-mono text-amber-500/40">0{index + 1}</span>
+                    <div className="h-px flex-1 bg-white/5" />
+                  </div>
+                  
+                  <div className="grid gap-8">
+                    <div className="relative group">
+                      <label className="text-[8px] uppercase tracking-[0.4em] text-slate-600 font-bold absolute -top-5 left-0">Nombre completo</label>
+                      <input 
+                        type="text" 
+                        placeholder="NOMBRE Y APELLIDO"
+                        className="w-full bg-transparent border-b border-white/10 py-3 focus:outline-none focus:border-amber-500/40 transition-all text-white text-xs tracking-widest placeholder:text-zinc-800"
+                        value={guest.name}
+                        onChange={(e) => updateGuestData(index, "name", e.target.value)}
+                      />
+                    </div>
+
+                    <div className="relative group">
+                      <label className="text-[8px] uppercase tracking-[0.4em] text-slate-600 font-bold absolute -top-5 left-0">Menú especial</label>
+                      <select 
+                        className="w-full bg-transparent border-b border-white/10 py-3 focus:outline-none text-xs text-slate-400 tracking-widest appearance-none cursor-pointer"
+                        value={guest.diet}
+                        onChange={(e) => updateGuestData(index, "diet", e.target.value)}
+                      >
+                        <option className="bg-zinc-950">NINGUNA</option>
+                        <option className="bg-zinc-950">CELÍACO/A</option>
+                        <option className="bg-zinc-950">VEGETARIANO/A</option>
+                        <option className="bg-zinc-950">VEGANO/A</option>
+                      </select>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+
+          {/* Botón de Acción Final */}
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={handleConfirm}
+            className="w-full py-5 bg-white text-black rounded-2xl flex items-center justify-center gap-3 font-bold text-[10px] uppercase tracking-[0.3em] hover:bg-amber-500 transition-all shadow-[0_20px_40px_rgba(255,255,255,0.05)]"
+          >
+            <MessageCircle size={16} strokeWidth={2.5} /> 
+            Finalizar Confirmación
+          </motion.button>
+        </div>
+
+      
       </div>
     </section>
   );
